@@ -38,16 +38,19 @@ if ($1passObj) {
         exit 1
     }
 }
-switch ($1passVersion -ge $targetVersion) {
-    # If the version of 1Password is less than the target, it will download the newest installer and update
-    ($False) {
-            Download-1Pass
-            Write-Host "1Password has been updated"
-            exit 0
-    }
+if ($1passVersion -ge $targetVersion) {
     # If the version of 1Password is greater than or equal to the target, it does nothing
-    ($True) {
-        Write-Host "1Password already up to date"
+    Write-Host "1Password already up to date"
+    exit 0
+    
+}else {
+    # If the version is less than the target, download and reinstall
+    try {
+        Download-1Pass
+        Write-Host "1Password has been updated"
         exit 0
+    }catch{
+        Write-Error "Error occurred while downloading update"
+        exit 1
     }
 }
